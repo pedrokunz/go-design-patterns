@@ -10,5 +10,10 @@ type Player struct {
 }
 
 func New(name string) Player {
-	return Player{Name: name}
+	return Player{
+		Name:   name,
+		Armour: internal.Armour{Value: 0},
+		Attack: internal.Attack{Value: 1},
+		Life:   internal.Life{Value: 100},
+	}
 }
