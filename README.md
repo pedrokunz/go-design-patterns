@@ -22,25 +22,88 @@ This project is licensed under the MIT License. See the LICENSE file for details
 #### Structure
 
 ```filetree
+## Suggested Package Structure
+
 go-design-patterns
-└── go-design-patterns
-|   ├── cmd
-|       └── main.go
-|   ├── pkg
-|       └── patterns
-|           ├── creational
-|               └── singleton.go
-|           ├── structural
-|               └── adapter.go
-|           └── behavioral
-|               └── observer.go
-|   ├── game
-|       ├── engine.go
-|       ├── player.go
-|       ├── room.go
-|       └── game.go
-|   ├── go.mod
-|   └── README.md
+└── domain
+    ├── core
+    │   ├── player
+    │   │   └── player.go
+    │   ├── enemy
+    │   │   └── enemy.go
+    │   ├── item
+    │   │   └── item.go
+    │   └── room
+    │       └── room.go
+    ├── aggregate
+    │   └── game
+    │       └── state.go
+    └── event
+        └── event.go
+        └── store.go
+```
+
+#### UML Diagram
+
+```mermaid
+classDiagram
+  class Player {
+    +string Name
+    +Armour Armour
+    +Life Life
+    +Attack Attack
+  }
+
+  class Armour {
+    +int Value
+  }
+
+  class Life {
+    +int Value
+  }
+
+  class Attack {
+    +int Value
+  }
+
+  class Enemy {
+    +string Type
+    +Armour Armour
+    +Life Life
+    +Attack Attack
+  }
+
+  class Item {
+    +string Name
+    +string Type
+  }
+
+  class Room {
+    +list~Item~ Items
+    +list~Enemy~ Enemies
+  }
+
+  class State {
+    +Player Player
+    +list~Room~ Rooms
+  }
+
+  class Event {
+    <<interface>>
+    +string Type()
+  }
+
+  Player --> Armour
+  Player --> Life
+  Player --> Attack
+  Enemy --> Life
+  Enemy --> Attack
+  Room --> Item
+  Room --> Enemy
+  GameState --> Player
+  GameState --> Enemy
+  GameState --> Item
+  GameState --> Room
 ```
 
 #### Example Code Snippets
