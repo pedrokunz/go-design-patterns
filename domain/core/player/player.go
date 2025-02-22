@@ -9,11 +9,17 @@ type Player struct {
 	Attack internal.Attack
 }
 
+const (
+	initialArmour = 0
+	initialAttack = 1
+	initialLife   = 100
+)
+
 func New(name string) Player {
 	return Player{
 		Name:   name,
-		Armour: internal.Armour{Value: 0},
-		Attack: internal.Attack{Value: 1},
-		Life:   internal.Life{Value: 100},
+		Armour: internal.Armour{Value: initialArmour},
+		Attack: internal.Attack{Value: initialAttack},
+		Life:   internal.Life{Value: initialLife},
 	}
 }
