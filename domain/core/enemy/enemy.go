@@ -8,3 +8,12 @@ type Enemy struct {
 	Life   internal.Life
 	Attack internal.Attack
 }
+
+func New(t Type) Enemy {
+	return Enemy{
+		Type:   t,
+		Armour: internal.Armour{Value: 0},
+		Attack: internal.Attack{Value: 1},
+		Life:   internal.Life{Value: 100},
+	}
+}
