@@ -4,6 +4,11 @@ type Observer interface {
 	Update(event Event)
 }
 
+type Notifier interface {
+	Attach(observer Observer)
+	Notify(event Event)
+}
+
 type Subject struct {
 	observers []Observer
 }
