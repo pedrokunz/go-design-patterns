@@ -30,7 +30,7 @@ func TestSubject(t *testing.T) {
 
 type ExampleEvent struct{}
 
-func (event *ExampleEvent) Type() string {
+func (event *ExampleEvent) Type() event.Kind {
 	return "hello"
 }
 
