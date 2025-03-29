@@ -29,9 +29,9 @@ func TestNotifier(t *testing.T) {
 		t.Run("when notifies observers", func(t *testing.T) {
 			notifier := observer.NewNotifier()
 
-			observer := &MockObserver{}
+			mockObserver := NewMockObserver()
 
-			attachErr := notifier.Attach(observer)
+			attachErr := notifier.Attach(mockObserver)
 			require.NoError(t, attachErr, "error attaching observer")
 
 			notifyPlayerJoinedErr := notifier.Notify(event.New(event.PlayerJoined))
@@ -40,8 +40,8 @@ func TestNotifier(t *testing.T) {
 			notifyPlayerLeftErr := notifier.Notify(event.New(event.PlayerLeft))
 			require.NoError(t, notifyPlayerLeftErr, "error notifying player left")
 
-			require.Equal(t, 2, observer.onCalls, "Observer should call 2 events")
-			require.Len(t, observer.events, 2, "Observer should have received 2 events")
+			require.Equal(t, 2, mockObserver.onCalls, "Observer should call 2 events")
+			require.Len(t, mockObserver.events, 2, "Observer should have received 2 events")
 		})
 	})
 
