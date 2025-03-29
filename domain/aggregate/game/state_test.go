@@ -36,21 +36,23 @@ func TestNewState(t *testing.T) {
 		mockSubject := &MockSubject{}
 		state.Notifier = mockSubject
 
-		observer1, observer1BuildErr := observer.NewFactory(observer.PlayerObserver).Build(
+		observer1, observer1NewErr := observer.New(
+			observer.PlayerObserver,
 			observer.PlayerObserverConfig{
 				Name: "george",
 			},
 		)
 
-		require.NoError(t, observer1BuildErr, "error building player observer 1")
+		require.NoError(t, observer1NewErr, "error building player observer 1")
 
-		observer2, observer2BuildErr := observer.NewFactory(observer.PlayerObserver).Build(
+		observer2, observer2NewErr := observer.New(
+			observer.PlayerObserver,
 			observer.PlayerObserverConfig{
 				Name: "washington",
 			},
 		)
 
-		require.NoError(t, observer2BuildErr, "error building player observer 2")
+		require.NoError(t, observer2NewErr, "error building player observer 2")
 
 		state.AddObserver(observer1)
 		state.AddObserver(observer2)

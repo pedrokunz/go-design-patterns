@@ -13,12 +13,13 @@ func TestNotifier(t *testing.T) {
 	t.Run("succeeds", func(t *testing.T) {
 		t.Run("when attach observers", func(t *testing.T) {
 			notifier := observer.NewNotifier()
-			playerObserver, buildErr := observer.NewFactory(observer.PlayerObserver).Build(
+			playerObserver, newErr := observer.New(
+				observer.PlayerObserver,
 				observer.PlayerObserverConfig{
 					Name: "player_name",
 				})
 
-			require.NoError(t, buildErr, "error building player observer")
+			require.NoError(t, newErr, "error building player observer")
 
 			attachErr := notifier.Attach(playerObserver)
 
@@ -60,19 +61,21 @@ func TestNotifier(t *testing.T) {
 		t.Run("when notifying observers with invalid event", func(t *testing.T) {
 			notifier := observer.NewNotifier()
 
-			observer1, buildErr := observer.NewFactory(observer.PlayerObserver).Build(
+			observer1, newErr := observer.New(
+				observer.PlayerObserver,
 				observer.PlayerObserverConfig{
 					Name: "player_name_1",
 				},
 			)
-			require.NoError(t, buildErr, "error building player observer 1")
+			require.NoError(t, newErr, "error building player observer 1")
 
-			observer2, buildErr := observer.NewFactory(observer.PlayerObserver).Build(
+			observer2, newErr := observer.New(
+				observer.PlayerObserver,
 				observer.PlayerObserverConfig{
 					Name: "player_name_2",
 				},
 			)
-			require.NoError(t, buildErr, "error building player observer 2")
+			require.NoError(t, newErr, "error building player observer 2")
 
 			attachErr := notifier.Attach(observer1)
 			require.NoError(t, attachErr, "error attaching observer 1")
