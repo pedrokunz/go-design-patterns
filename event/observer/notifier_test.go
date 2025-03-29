@@ -196,9 +196,3 @@ func TestNotifier(t *testing.T) {
 		})
 	})
 }
-
-type ExampleEvent struct{}
-
-func (event *ExampleEvent) Type() event.Kind {
-	return "hello"
-}
