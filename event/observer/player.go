@@ -13,8 +13,13 @@ type playerObserver struct {
 	name string
 }
 
-func newPlayerObserver(config PlayerObserverConfig) (Observer, error) {
-	return &playerObserver{name: config.Name}, nil
+func newPlayerObserver(config any) (Observer, error) {
+	playerObserverConfig, ok := config.(PlayerObserverConfig)
+	if !ok {
+		return nil, invalidConfigType
+	}
+
+	return &playerObserver{name: playerObserverConfig.Name}, nil
 }
 
 func (p *playerObserver) On(event event.Event) error {

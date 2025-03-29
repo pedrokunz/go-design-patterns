@@ -8,11 +8,11 @@ type Observer interface {
 	On(event event.Event) error
 }
 
-type Kind string
-
 func New(kind Kind, config any) (Observer, error) {
-	return NewFactory(kind).Build(config)
+	return newFactory(kind).Build(config)
 }
+
+type Kind string
 
 const (
 	PlayerObserver Kind = "player"
