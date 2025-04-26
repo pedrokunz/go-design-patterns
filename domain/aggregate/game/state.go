@@ -4,28 +4,32 @@ import (
 	"github.com/pedrokunz/go-design-patterns/domain/aggregate/room"
 	"github.com/pedrokunz/go-design-patterns/domain/core/player"
 	"github.com/pedrokunz/go-design-patterns/event"
+	"github.com/pedrokunz/go-design-patterns/event/observer"
 )
 
 var state *State = nil
 
 type State struct {
-	Player  player.Player
-	Rooms   []room.Room
-	Subject event.Notifier
+	Player   player.Player
+	Rooms    []room.Room
+	Notifier observer.Notifier
 }
 
 func NewState() *State {
 	if state == nil {
-		state = &State{Subject: &event.Subject{}}
+		state = &State{
+			Rooms:    make([]room.Room, 0),
+			Notifier: observer.NewNotifier(),
+		}
 	}
 
 	return state
 }
 
-func (state *State) AddObserver(observer event.Observer) {
-	state.Subject.Attach(observer)
+func (state *State) AddObserver(observer observer.Observer) {
+	state.Notifier.Attach(observer)
 }
 
 func (state *State) NotifyEvent(event event.Event) {
-	state.Subject.Notify(event)
+	state.Notifier.Notify(event)
 }
