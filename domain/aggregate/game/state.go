@@ -28,9 +28,9 @@ func NewState() *State {
 }
 
 func (state *State) AddObserver(observer observer.Observer) {
-	state.Notifier.Attach(observer)
+	_ = state.Notifier.Attach(observer)
 }
 
 func (state *State) NotifyEvent(event event.Event) {
-	state.Notifier.Notify(event)
+	_ = state.Notifier.Notify(event)
 }
