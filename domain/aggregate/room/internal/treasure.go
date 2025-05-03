@@ -17,6 +17,6 @@ func (t *TreasureRoom) Items() []item.Item {
 	return t.items
 }
 
-func (t *TreasureRoom) Enemies() []enemy.Enemy {
-	return make([]enemy.Enemy, 0)
+func (t *TreasureRoom) Enemies() []*enemy.Enemy {
+	return make([]*enemy.Enemy, 0)
 }

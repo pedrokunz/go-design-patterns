@@ -9,8 +9,8 @@ type Enemy struct {
 	Attack internal.Attack
 }
 
-func New(t Kind) Enemy {
-	return Enemy{
+func New(t Kind) *Enemy {
+	return &Enemy{
 		Type:   t,
 		Armour: internal.Armour{Value: 0},
 		Attack: internal.Attack{Value: 1},

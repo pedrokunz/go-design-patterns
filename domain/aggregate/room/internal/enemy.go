@@ -7,10 +7,10 @@ import (
 
 type EnemyRoom struct {
 	items   []item.Item
-	enemies []enemy.Enemy
+	enemies []*enemy.Enemy
 }
 
-func NewEnemyRoom(items []item.Item, enemies []enemy.Enemy) *EnemyRoom {
+func NewEnemyRoom(items []item.Item, enemies []*enemy.Enemy) *EnemyRoom {
 	return &EnemyRoom{items: items, enemies: enemies}
 }
 
@@ -18,6 +18,6 @@ func (e *EnemyRoom) Items() []item.Item {
 	return e.items
 }
 
-func (e *EnemyRoom) Enemies() []enemy.Enemy {
+func (e *EnemyRoom) Enemies() []*enemy.Enemy {
 	return e.enemies
 }

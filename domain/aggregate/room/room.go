@@ -7,5 +7,5 @@ import (
 
 type Room interface {
 	Items() []item.Item
-	Enemies() []enemy.Enemy
+	Enemies() []*enemy.Enemy
 }

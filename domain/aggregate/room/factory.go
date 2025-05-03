@@ -9,7 +9,7 @@ import (
 type FactoryInput struct {
 	Kind    Kind
 	Items   []item.Item
-	Enemies []enemy.Enemy
+	Enemies []*enemy.Enemy
 }
 
 func Factory(input FactoryInput) Room {
