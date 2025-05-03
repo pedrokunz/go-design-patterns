@@ -13,6 +13,7 @@ type State struct {
 	Player       *player.Player
 	Rooms        []room.Room
 	Notifier     observer.Notifier
+	IsPlayerTurn bool
 }
 
 func NewState() *State {
