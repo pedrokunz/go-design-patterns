@@ -15,8 +15,8 @@ const (
 	initialLife   = 100
 )
 
-func New(name string) Player {
-	return Player{
+func New(name string) *Player {
+	return &Player{
 		Name:   name,
 		Armour: internal.Armour{Value: initialArmour},
 		Attack: internal.Attack{Value: initialAttack},

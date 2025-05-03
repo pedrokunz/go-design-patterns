@@ -1,6 +1,7 @@
 package player_test
 
 import (
+	"github.com/stretchr/testify/require"
 	"testing"
 
 	"github.com/pedrokunz/go-design-patterns/domain/core/internal"
@@ -9,16 +10,14 @@ import (
 
 func TestPlayer(t *testing.T) {
 	t.Run("constructs a player", func(t *testing.T) {
-		got := player.New("Elmster")
-		want := player.Player{
+		actual := player.New("Elmster")
+		expected := &player.Player{
 			Name:   "Elmster",
 			Armour: internal.Armour{Value: 0},
 			Attack: internal.Attack{Value: 1},
 			Life:   internal.Life{Value: 100},
 		}
 
-		if got != want {
-			t.Errorf("got %v, want %v", got, want)
-		}
+		require.Equal(t, actual, expected, "actual %v, expected %v", actual, expected)
 	})
 }
