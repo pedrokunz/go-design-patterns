@@ -1,6 +1,9 @@
 package enemy
 
-import "github.com/pedrokunz/go-design-patterns/domain/core/internal"
+import (
+	"github.com/pedrokunz/go-design-patterns/domain/core/internal"
+	"math/rand"
+)
 
 type Enemy struct {
 	Type   Kind
@@ -16,4 +19,12 @@ func New(t Kind) *Enemy {
 		Attack: internal.Attack{Min: 1, Max: 100},
 		Life:   internal.Life{Value: 100},
 	}
+}
+
+func (e *Enemy) TakeDamage(attack internal.Attack) int {
+	damage := rand.Intn(attack.Max-attack.Min) + attack.Min
+
+	e.Life.Value -= damage - e.Armour.Value
+
+	return damage
 }

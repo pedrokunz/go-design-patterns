@@ -1,6 +1,9 @@
 package player
 
-import "github.com/pedrokunz/go-design-patterns/domain/core/internal"
+import (
+	"github.com/pedrokunz/go-design-patterns/domain/core/internal"
+	"math/rand"
+)
 
 type Player struct {
 	Name   string
@@ -16,4 +19,12 @@ func New(name string) *Player {
 		Attack: internal.Attack{Min: 1, Max: 100},
 		Life:   internal.Life{Value: 100},
 	}
+}
+
+func (p *Player) TakeDamage(attack internal.Attack) int {
+	damage := rand.Intn(attack.Max-attack.Min) + attack.Min
+
+	p.Life.Value -= damage - p.Armour.Value
+
+	return damage
 }
