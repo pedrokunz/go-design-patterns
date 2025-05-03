@@ -1,5 +1,6 @@
 package internal
 
 type Attack struct {
-    Value int
+	Min int
+	Max int
 }

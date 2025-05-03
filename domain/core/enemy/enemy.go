@@ -13,7 +13,7 @@ func New(t Kind) *Enemy {
 	return &Enemy{
 		Type:   t,
 		Armour: internal.Armour{Value: 0},
-		Attack: internal.Attack{Value: 1},
+		Attack: internal.Attack{Min: 1, Max: 100},
 		Life:   internal.Life{Value: 100},
 	}
 }
