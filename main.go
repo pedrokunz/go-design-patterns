@@ -27,9 +27,9 @@ func main() {
 	}
 
 	state := game.NewState()
-	player := player.New(name)
+	Player := player.New(name)
 
-	state.Player = player
+	state.Player = Player
 
 	treasuryRoom := room.Factory(
 		room.FactoryInput{
@@ -63,27 +63,27 @@ func main() {
 
 	fmt.Println("Initiate combat!")
 
-	enemy := state.Rooms[1].Enemies()[0]
-	for enemy.Life.Value > 0 {
+	Enemy := state.Rooms[1].Enemies()[0]
+	for Enemy.Life.Value > 0 {
 		if state.IsPlayerTurn {
-			damage := enemy.TakeDamage(player.Attack)
+			damage := Enemy.TakeDamage(Player.Attack)
 			state.IsPlayerTurn = false
 
-			if enemy.Life.Value <= 0 {
+			if Enemy.Life.Value <= 0 {
 				fmt.Println("Enemy died! ☠️")
 				break
 			} else {
-				fmt.Printf("👺 Enemy took %d damage ♥️[%d]\n", damage, enemy.Life.Value)
+				fmt.Printf("👺 Enemy took %d damage ♥️[%d]\n", damage, Enemy.Life.Value)
 			}
 		} else {
-			damage := player.TakeDamage(enemy.Attack)
+			damage := Player.TakeDamage(Enemy.Attack)
 			state.IsPlayerTurn = true
 
-			if player.Life.Value <= 0 {
+			if Player.Life.Value <= 0 {
 				fmt.Println("Player died! ☠️")
 				break
 			} else {
-				fmt.Printf("🤺 Player took %d damage ♥️[%d]\n", damage, player.Life.Value)
+				fmt.Printf("🤺 Player took %d damage ♥️[%d]\n", damage, Player.Life.Value)
 			}
 		}
 	}
