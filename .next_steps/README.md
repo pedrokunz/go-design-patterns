@@ -81,7 +81,7 @@ go-design-patterns/
 
 ### 3.1. Create Event Sourcing Base Components
 
-1. Define base event interface and structure:
+1. Define event interface:
 
   ```go
   // internal/eventsourcing/event.go
@@ -89,30 +89,37 @@ package eventsourcing
 
 import (
 	"github.com/google/uuid"
+	"github.com/pedrokunz/go-design-patterns/internal/eventsourcing/types"
 	"time"
 )
 
 type Event interface {
 	AggregateID() uuid.UUID
-	AggregateType() string
-	EventType() string
-	Version() int
-	Timestamp() time.Time
-	Payload() interface{}
+	AggregateType() types.AggregateType
+	AggregateVersion() int
+
+	ID() uuid.UUID
+	Payload() []byte
+	RecordedAt() time.Time
+	Type() string
+
+	CausationID() uuid.UUID
+	Metadata() map[string]string
 }
 
-type BaseEvent struct {
-	ID           uuid.UUID
-	AggrID       uuid.UUID
-	AggrType     string
-	EventType    string
-	EventVersion int
-	EventTime    time.Time
-	EventPayload interface{}
+type DomainEvent struct {
+	aggregateID      uuid.UUID
+	aggregateType    types.AggregateType
+	aggregateVersion int
+	id               uuid.UUID
+	payload          []byte
+	recordedAt       time.Time
+	eventType        string
+	causationID      uuid.UUID
+	metadata         map[string]string
 }
 
-// Implement Event interface methods
-```
+  ```
 
 2. Define aggregate interface:
 
@@ -120,20 +127,25 @@ type BaseEvent struct {
   // internal/eventsourcing/aggregate.go
 package eventsourcing
 
+import (
+	"github.com/google/uuid"
+	"github.com/pedrokunz/go-design-patterns/internal/eventsourcing/types"
+)
+
 type Aggregate interface {
 	ID() uuid.UUID
-	Type() string
+	Type() types.AggregateType
 	Version() int
 	ApplyEvent(event Event)
-	UncommittedEvents() []Event
-	ClearUncommittedEvents()
+	Changes() []Event
+	FlushChanges()
 }
 
-type BaseAggregate struct {
-	AggregateID      uuid.UUID
-	AggregateType    string
-	AggregateVersion int
-	Changes          []Event
+type DomainAggregate struct {
+	id            uuid.UUID
+	aggregateType types.AggregateType
+	version       int
+	changes       []Event
 }
 
 ```
