@@ -56,12 +56,17 @@ go-design-patterns/
 │   │   └── usecase/              # Use case implementations
 │   ├── domain/
 │   │   ├── aggregate/            # Aggregate roots
+│   │   │   ├── enemy/
+│   │   │   ├── game/
+│   │   │   ├── internal/
+│   │   │   ├── item/
 │   │   │   ├── player/
 │   │   │   ├── room/
 │   │   │   └── game/
 │   │   ├── command/              # Command definitions
 │   │   ├── event/                # Event definitions
 │   │   └── valueobject/          # Value objects
+│   ├── eventsourcing/            # Generic event sourcing toolkit
 │   ├── infrastructure/
 │   │   ├── eventstore/           # Event storage implementation
 │   │   ├── projection/           # Projection implementations
@@ -69,10 +74,7 @@ go-design-patterns/
 │   │   └── repository/           # Repository implementations
 │   └── interfaces/
 │       ├── api/                  # API handlers
-│       └── console/              # Console UI
-└── pkg/
-├── eventsourcing/                # Generic event sourcing toolkit
-└── common/                       # Shared utilities
+└──     └── console/              # Console UI
 ```
 
 ## 3. Implementation Steps
@@ -81,8 +83,8 @@ go-design-patterns/
 
 1. Define base event interface and structure:
 
-```go
-// pkg/eventsourcing/event.go
+  ```go
+  // internal/eventsourcing/event.go
 package eventsourcing
 
 import (
@@ -114,8 +116,8 @@ type BaseEvent struct {
 
 2. Define aggregate interface:
 
-```go
-// pkg/eventsourcing/aggregate.go
+  ```go
+  // internal/eventsourcing/aggregate.go
 package eventsourcing
 
 type Aggregate interface {
@@ -134,13 +136,12 @@ type BaseAggregate struct {
 	Changes          []Event
 }
 
-// Implement Aggregate interface methods
 ```
 
 3. Create command and handler interfaces:
 
 ```go
-// pkg/eventsourcing/command.go
+// internal/eventsourcing/command.go
 package eventsourcing
 
 type Command interface {
@@ -157,7 +158,7 @@ type CommandHandler interface {
 4. Implement event store interface:
 
 ```go
-// pkg/eventsourcing/eventstore.go
+// internal/eventsourcing/eventstore.go
 package eventsourcing
 
 type EventStore interface {
