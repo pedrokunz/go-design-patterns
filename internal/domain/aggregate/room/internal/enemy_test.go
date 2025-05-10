@@ -11,8 +11,8 @@ import (
 
 func TestNewEnemyRoom(t *testing.T) {
 	t.Run("constructs an enemy room", func(t *testing.T) {
-		items := []item.Item{}
-		enemies := []enemy.Enemy{}
+		items := make([]item.Item, 0)
+		enemies := make([]*enemy.Enemy, 0)
 		actual := internal.NewEnemyRoom(items, enemies)
 		expected := internal.NewEnemyRoom(items, enemies)
 
