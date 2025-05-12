@@ -19,4 +19,14 @@ func TestEnemy(t *testing.T) {
 
 		require.Equal(t, actual, expected, "actual %v, expected %v", actual, expected)
 	})
+
+	t.Run("takes damage", func(t *testing.T) {
+		actual := enemy.New(enemy.Goblin)
+		damage := actual.TakeDamage(internal.Attack{Min: 1, Max: 10})
+
+		require.Greater(t, damage, 0)
+		require.Less(t, damage, 10)
+		require.GreaterOrEqual(t, actual.Life.Value, 90)
+		require.Less(t, actual.Life.Value, 100)
+	})
 }
