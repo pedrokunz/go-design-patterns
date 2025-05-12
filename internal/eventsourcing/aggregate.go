@@ -30,7 +30,7 @@ type Aggregate interface {
 	FlushChanges()
 }
 
-type DomainAggregate struct {
+type domainAggregate struct {
 	id            uuid.UUID
 	aggregateType types.AggregateType
 	version       int
@@ -47,7 +47,7 @@ func NewDomainAggregate(
 		return nil, err
 	}
 
-	return &DomainAggregate{
+	return &domainAggregate{
 		id:            id,
 		aggregateType: aggregateType,
 		version:       version,
@@ -55,42 +55,48 @@ func NewDomainAggregate(
 	}, nil
 }
 
-func (d *DomainAggregate) ID() uuid.UUID {
+func (d *domainAggregate) ID() uuid.UUID {
 	return d.id
 }
 
-func (d *DomainAggregate) Type() types.AggregateType {
+func (d *domainAggregate) Type() types.AggregateType {
 	return d.aggregateType
 }
 
-func (d *DomainAggregate) Version() int {
+func (d *domainAggregate) Version() int {
 	return d.version
 }
 
-func (d *DomainAggregate) ApplyEvent(event Event) {
+func (d *domainAggregate) ApplyEvent(event Event) {
 	d.version++
 	d.changes = append(d.changes, event)
 }
 
-func (d *DomainAggregate) Changes() []Event {
+func (d *domainAggregate) Changes() []Event {
 	return d.changes
 }
 
-func (d *DomainAggregate) FlushChanges() {
+func (d *domainAggregate) FlushChanges() {
 	d.changes = []Event{}
 }
 
+const (
+	ErrInvalidAggregateID      = "invalid aggregate ID"
+	ErrInvalidAggregateType    = "invalid aggregate type"
+	ErrInvalidAggregateVersion = "invalid aggregate version"
+)
+
 func validateDomainAggregateInput(id uuid.UUID, aggregateType types.AggregateType, version int) error {
 	if id == uuid.Nil {
-		return fmt.Errorf("invalid aggregate ID")
+		return fmt.Errorf(ErrInvalidAggregateID)
 	}
 
 	if !aggregateType.IsValid() {
-		return fmt.Errorf("invalid aggregate type")
+		return fmt.Errorf(ErrInvalidAggregateType)
 	}
 
 	if version < 0 {
-		return fmt.Errorf("invalid aggregate version")
+		return fmt.Errorf(ErrInvalidAggregateVersion)
 	}
 
 	return nil

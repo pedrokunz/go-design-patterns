@@ -120,7 +120,7 @@ func TestEvent(t *testing.T) {
 
 			require.Error(t, newDomainEventErr)
 			require.Nil(t, event)
-			require.EqualError(t, newDomainEventErr, types.ErrInvalidAggregateID)
+			require.EqualError(t, newDomainEventErr, eventsourcing.ErrInvalidAggregateID)
 		})
 
 		t.Run("invalid aggregate type", func(t *testing.T) {
@@ -140,7 +140,7 @@ func TestEvent(t *testing.T) {
 
 			require.Error(t, newDomainEventErr)
 			require.Nil(t, event)
-			require.EqualError(t, newDomainEventErr, types.ErrInvalidAggregateType)
+			require.EqualError(t, newDomainEventErr, eventsourcing.ErrInvalidAggregateType)
 		})
 
 		t.Run("invalid aggregate version", func(t *testing.T) {
@@ -160,7 +160,7 @@ func TestEvent(t *testing.T) {
 
 			require.Error(t, newDomainEventErr)
 			require.Nil(t, event)
-			require.EqualError(t, newDomainEventErr, types.ErrInvalidAggregateVersion)
+			require.EqualError(t, newDomainEventErr, eventsourcing.ErrInvalidAggregateVersion)
 		})
 
 		t.Run("invalid event ID", func(t *testing.T) {
@@ -180,7 +180,7 @@ func TestEvent(t *testing.T) {
 
 			require.Error(t, newDomainEventErr)
 			require.Nil(t, event)
-			require.EqualError(t, newDomainEventErr, types.ErrInvalidEventID)
+			require.EqualError(t, newDomainEventErr, eventsourcing.ErrInvalidEventID)
 		})
 
 		t.Run("invalid event payload", func(t *testing.T) {
@@ -200,7 +200,7 @@ func TestEvent(t *testing.T) {
 
 			require.Error(t, newDomainEventErr)
 			require.Nil(t, event)
-			require.EqualError(t, newDomainEventErr, types.ErrInvalidEventPayload)
+			require.EqualError(t, newDomainEventErr, eventsourcing.ErrInvalidEventPayload)
 		})
 
 		t.Run("invalid event recorded at", func(t *testing.T) {
@@ -220,7 +220,7 @@ func TestEvent(t *testing.T) {
 
 			require.Error(t, newDomainEventErr)
 			require.Nil(t, event)
-			require.EqualError(t, newDomainEventErr, types.ErrInvalidEventRecordedAt)
+			require.EqualError(t, newDomainEventErr, eventsourcing.ErrInvalidEventRecordedAt)
 		})
 
 		t.Run("invalid event type", func(t *testing.T) {
@@ -240,7 +240,7 @@ func TestEvent(t *testing.T) {
 
 			require.Error(t, newDomainEventErr)
 			require.Nil(t, event)
-			require.EqualError(t, newDomainEventErr, types.ErrInvalidEventType)
+			require.EqualError(t, newDomainEventErr, eventsourcing.ErrInvalidEventType)
 		})
 
 		t.Run("invalid causation ID", func(t *testing.T) {
@@ -260,7 +260,7 @@ func TestEvent(t *testing.T) {
 
 			require.Error(t, newDomainEventErr)
 			require.Nil(t, event)
-			require.EqualError(t, newDomainEventErr, types.ErrInvalidCausationID)
+			require.EqualError(t, newDomainEventErr, eventsourcing.ErrInvalidCausationID)
 		})
 	})
 }

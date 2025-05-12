@@ -35,7 +35,7 @@ type Event interface {
 	Metadata() map[string]string
 }
 
-type DomainEvent struct {
+type domainEvent struct {
 	aggregateID      uuid.UUID
 	aggregateType    types.AggregateType
 	aggregateVersion int
@@ -72,7 +72,7 @@ func NewDomainEvent(
 		return nil, err
 	}
 
-	return &DomainEvent{
+	return &domainEvent{
 		aggregateID:      aggregateID,
 		aggregateType:    aggregateType,
 		aggregateVersion: aggregateVersion,
@@ -85,41 +85,49 @@ func NewDomainEvent(
 	}, nil
 }
 
-func (d DomainEvent) AggregateID() uuid.UUID {
+func (d domainEvent) AggregateID() uuid.UUID {
 	return d.aggregateID
 }
 
-func (d DomainEvent) AggregateType() types.AggregateType {
+func (d domainEvent) AggregateType() types.AggregateType {
 	return d.aggregateType
 }
 
-func (d DomainEvent) AggregateVersion() int {
+func (d domainEvent) AggregateVersion() int {
 	return d.aggregateVersion
 }
 
-func (d DomainEvent) ID() uuid.UUID {
+func (d domainEvent) ID() uuid.UUID {
 	return d.id
 }
 
-func (d DomainEvent) Payload() []byte {
+func (d domainEvent) Payload() []byte {
 	return d.payload
 }
 
-func (d DomainEvent) RecordedAt() time.Time {
+func (d domainEvent) RecordedAt() time.Time {
 	return d.recordedAt
 }
 
-func (d DomainEvent) Type() types.EventType {
+func (d domainEvent) Type() types.EventType {
 	return d.eventType
 }
 
-func (d DomainEvent) CausationID() *uuid.UUID {
+func (d domainEvent) CausationID() *uuid.UUID {
 	return d.causationID
 }
 
-func (d DomainEvent) Metadata() map[string]string {
+func (d domainEvent) Metadata() map[string]string {
 	return d.metadata
 }
+
+const (
+	ErrInvalidEventID         = "invalid event ID"
+	ErrInvalidEventPayload    = "invalid event payload"
+	ErrInvalidEventRecordedAt = "invalid event recorded at"
+	ErrInvalidEventType       = "invalid event type"
+	ErrInvalidCausationID     = "invalid causation ID"
+)
 
 func validateDomainEventInput(
 	aggregateID uuid.UUID,
@@ -132,35 +140,35 @@ func validateDomainEventInput(
 	causationID *uuid.UUID,
 ) error {
 	if aggregateID == uuid.Nil {
-		return errors.New(types.ErrInvalidAggregateID)
+		return errors.New(ErrInvalidAggregateID)
 	}
 
 	if !aggregateType.IsValid() {
-		return errors.New(types.ErrInvalidAggregateType)
+		return errors.New(ErrInvalidAggregateType)
 	}
 
 	if aggregateVersion < 0 {
-		return errors.New(types.ErrInvalidAggregateVersion)
+		return errors.New(ErrInvalidAggregateVersion)
 	}
 
 	if id == uuid.Nil {
-		return errors.New(types.ErrInvalidEventID)
+		return errors.New(ErrInvalidEventID)
 	}
 
 	if len(payload) == 0 {
-		return errors.New(types.ErrInvalidEventPayload)
+		return errors.New(ErrInvalidEventPayload)
 	}
 
 	if recordedAt.IsZero() {
-		return errors.New(types.ErrInvalidEventRecordedAt)
+		return errors.New(ErrInvalidEventRecordedAt)
 	}
 
 	if !eventType.IsValid() {
-		return errors.New(types.ErrInvalidEventType)
+		return errors.New(ErrInvalidEventType)
 	}
 
 	if causationID != nil && *causationID == uuid.Nil {
-		return errors.New(types.ErrInvalidCausationID)
+		return errors.New(ErrInvalidCausationID)
 	}
 
 	return nil

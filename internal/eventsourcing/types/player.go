@@ -5,3 +5,8 @@ const (
 
 	PlayerCreatedEventType EventType = "player.created"
 )
+
+func init() {
+	RegisterAggregateType(PlayerAggregateType)
+	RegisterEventType(PlayerCreatedEventType)
+}
