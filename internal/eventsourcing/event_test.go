@@ -7,13 +7,11 @@ import (
 	"github.com/pedrokunz/go-design-patterns/internal/eventsourcing/types"
 	"github.com/stretchr/testify/require"
 	"testing"
-	"time"
 )
 
 func TestEvent(t *testing.T) {
 	// Arrange
 	aggregateID := common.NewDeterministicUUID("player-1")
-	aggregateVersion := 0
 	aggregateType := types.PlayerAggregate
 	aggregate, newDomainAggregateErr := eventsourcing.NewDomainAggregate(
 		aggregateID,
@@ -22,228 +20,120 @@ func TestEvent(t *testing.T) {
 
 	require.NoError(t, newDomainAggregateErr)
 
-	id := common.NewDeterministicUUID("event-1")
 	payload := []byte(`{"name":"player1"}`)
-	recordedAt := time.Now()
-	eventType := types.PlayerCreatedEventType
+	eventType := types.PlayerCreated
 	causationID := common.NewDeterministicUUID("command-or-event-1")
 	metadata := map[string]string{"key": "value"}
 
 	t.Run("should create a new event", func(t *testing.T) {
 		t.Run("with all parameters", func(t *testing.T) {
-			event, newDomainEventErr := eventsourcing.NewDomainEvent(
-				aggregateID,
-				aggregateType,
-				aggregateVersion,
-				id,
+			event, newDomainEventErr := eventsourcing.NewEventBuilder(
+				aggregate,
 				payload,
-				recordedAt,
 				eventType,
+			).WithCausationID(
 				&causationID,
+			).WithMetadata(
 				metadata,
-			)
+			).Build()
 
 			// Assert
 			require.NoError(t, newDomainEventErr)
 			require.Equal(t, aggregateID, event.AggregateID())
 			require.Equal(t, aggregateType, event.AggregateType())
-			require.Equal(t, aggregateVersion, event.AggregateVersion())
-			require.Equal(t, id, event.ID())
 			require.Equal(t, payload, event.Payload())
-			require.Equal(t, recordedAt, event.RecordedAt())
 			require.Equal(t, eventType, event.Type())
 			require.Equal(t, &causationID, event.CausationID())
 			require.Equal(t, metadata, event.Metadata())
 		})
 
-		t.Run("without causation ID", func(t *testing.T) {
-			event, newDomainEventErr := eventsourcing.NewDomainEvent(
-				aggregateID,
-				aggregateType,
-				aggregateVersion,
-				id,
+		t.Run("with minimal parameters", func(t *testing.T) {
+			event, newDomainEventErr := eventsourcing.NewEventBuilder(
+				aggregate,
 				payload,
-				recordedAt,
 				eventType,
-				nil,
-				metadata,
-			)
+			).Build()
 
 			// Assert
 			require.NoError(t, newDomainEventErr)
 			require.Equal(t, aggregateID, event.AggregateID())
 			require.Equal(t, aggregateType, event.AggregateType())
-			require.Equal(t, aggregateVersion, event.AggregateVersion())
-			require.Equal(t, id, event.ID())
 			require.Equal(t, payload, event.Payload())
-			require.Equal(t, recordedAt, event.RecordedAt())
+			require.Equal(t, eventType, event.Type())
+			require.Nil(t, event.CausationID())
+			require.Empty(t, event.Metadata())
+		})
+
+		t.Run("without causation ID", func(t *testing.T) {
+			event, newDomainEventErr := eventsourcing.NewEventBuilder(
+				aggregate,
+				payload,
+				eventType,
+			).WithMetadata(
+				metadata,
+			).Build()
+
+			// Assert
+			require.NoError(t, newDomainEventErr)
+			require.Equal(t, aggregateID, event.AggregateID())
+			require.Equal(t, aggregateType, event.AggregateType())
+			require.Equal(t, payload, event.Payload())
 			require.Equal(t, eventType, event.Type())
 			require.Nil(t, event.CausationID())
 			require.Equal(t, metadata, event.Metadata())
 		})
 
 		t.Run("without metadata", func(t *testing.T) {
-			event, newDomainEventErr := eventsourcing.NewDomainEvent(
-				aggregateID,
-				aggregateType,
-				aggregateVersion,
-				id,
+			event, newDomainEventErr := eventsourcing.NewEventBuilder(
+				aggregate,
 				payload,
-				recordedAt,
 				eventType,
+			).WithCausationID(
 				&causationID,
-				nil,
-			)
+			).Build()
 
 			// Assert
 			require.NoError(t, newDomainEventErr)
 			require.Equal(t, aggregateID, event.AggregateID())
 			require.Equal(t, aggregateType, event.AggregateType())
-			require.Equal(t, aggregateVersion, event.AggregateVersion())
-			require.Equal(t, id, event.ID())
 			require.Equal(t, payload, event.Payload())
-			require.Equal(t, recordedAt, event.RecordedAt())
 			require.Equal(t, eventType, event.Type())
 			require.Equal(t, &causationID, event.CausationID())
-			require.Nil(t, event.Metadata())
+			require.Empty(t, event.Metadata())
 		})
 	})
 
 	t.Run("should return error when creating event with invalid parameters", func(t *testing.T) {
-		t.Run("invalid aggregate ID", func(t *testing.T) {
-			invalidAggregateID := uuid.Nil
-
-			event, newDomainEventErr := eventsourcing.NewDomainEvent(
-				invalidAggregateID,
-				aggregateType,
-				aggregateVersion,
-				id,
-				payload,
-				recordedAt,
-				eventType,
-				&causationID,
-				metadata,
-			)
-
-			require.Error(t, newDomainEventErr)
-			require.Nil(t, event)
-			require.EqualError(t, newDomainEventErr, eventsourcing.ErrInvalidAggregateID)
-		})
-
-		t.Run("invalid aggregate type", func(t *testing.T) {
-			invalidAggregateType := types.AggregateType("")
-
-			event, newDomainEventErr := eventsourcing.NewDomainEvent(
-				aggregateID,
-				invalidAggregateType,
-				aggregateVersion,
-				id,
-				payload,
-				recordedAt,
-				eventType,
-				&causationID,
-				metadata,
-			)
-
-			require.Error(t, newDomainEventErr)
-			require.Nil(t, event)
-			require.EqualError(t, newDomainEventErr, eventsourcing.ErrInvalidAggregateType)
-		})
-
-		t.Run("invalid aggregate version", func(t *testing.T) {
-			invalidAggregateVersion := -1
-
-			event, newDomainEventErr := eventsourcing.NewDomainEvent(
-				aggregateID,
-				aggregateType,
-				invalidAggregateVersion,
-				id,
-				payload,
-				recordedAt,
-				eventType,
-				&causationID,
-				metadata,
-			)
-
-			require.Error(t, newDomainEventErr)
-			require.Nil(t, event)
-			require.EqualError(t, newDomainEventErr, eventsourcing.ErrInvalidAggregateVersion)
-		})
-
-		t.Run("invalid event ID", func(t *testing.T) {
-			invalidEventID := uuid.Nil
-
-			event, newDomainEventErr := eventsourcing.NewDomainEvent(
-				aggregateID,
-				aggregateType,
-				aggregateVersion,
-				invalidEventID,
-				payload,
-				recordedAt,
-				eventType,
-				&causationID,
-				metadata,
-			)
-
-			require.Error(t, newDomainEventErr)
-			require.Nil(t, event)
-			require.EqualError(t, newDomainEventErr, eventsourcing.ErrInvalidEventID)
-		})
-
 		t.Run("invalid event payload", func(t *testing.T) {
 			invalidPayload := []byte("")
 
-			event, newDomainEventErr := eventsourcing.NewDomainEvent(
-				aggregateID,
-				aggregateType,
-				aggregateVersion,
-				id,
+			event, newDomainEventErr := eventsourcing.NewEventBuilder(
+				aggregate,
 				invalidPayload,
-				recordedAt,
 				eventType,
+			).WithCausationID(
 				&causationID,
+			).WithMetadata(
 				metadata,
-			)
+			).Build()
 
 			require.Error(t, newDomainEventErr)
 			require.Nil(t, event)
 			require.EqualError(t, newDomainEventErr, eventsourcing.ErrInvalidEventPayload)
 		})
 
-		t.Run("invalid event recorded at", func(t *testing.T) {
-			invalidRecordedAt := time.Time{}
-
-			event, newDomainEventErr := eventsourcing.NewDomainEvent(
-				aggregateID,
-				aggregateType,
-				aggregateVersion,
-				id,
-				payload,
-				invalidRecordedAt,
-				eventType,
-				&causationID,
-				metadata,
-			)
-
-			require.Error(t, newDomainEventErr)
-			require.Nil(t, event)
-			require.EqualError(t, newDomainEventErr, eventsourcing.ErrInvalidEventRecordedAt)
-		})
-
 		t.Run("invalid event type", func(t *testing.T) {
 			invalidEventType := types.EventType("")
 
-			event, newDomainEventErr := eventsourcing.NewDomainEvent(
-				aggregateID,
-				aggregateType,
-				aggregateVersion,
-				id,
+			event, newDomainEventErr := eventsourcing.NewEventBuilder(
+				aggregate,
 				payload,
-				recordedAt,
 				invalidEventType,
+			).WithCausationID(
 				&causationID,
+			).WithMetadata(
 				metadata,
-			)
+			).Build()
 
 			require.Error(t, newDomainEventErr)
 			require.Nil(t, event)
@@ -253,17 +143,15 @@ func TestEvent(t *testing.T) {
 		t.Run("invalid causation ID", func(t *testing.T) {
 			invalidCausationID := uuid.Nil
 
-			event, newDomainEventErr := eventsourcing.NewDomainEvent(
-				aggregateID,
-				aggregateType,
-				aggregateVersion,
-				id,
+			event, newDomainEventErr := eventsourcing.NewEventBuilder(
+				aggregate,
 				payload,
-				recordedAt,
 				eventType,
+			).WithCausationID(
 				&invalidCausationID,
+			).WithMetadata(
 				metadata,
-			)
+			).Build()
 
 			require.Error(t, newDomainEventErr)
 			require.Nil(t, event)

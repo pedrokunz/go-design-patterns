@@ -47,42 +47,71 @@ type domainEvent struct {
 	metadata         map[string]string
 }
 
-func NewDomainEvent(
-	aggregateID uuid.UUID,
-	aggregateType types.AggregateType,
-	aggregateVersion int,
-	id uuid.UUID,
+type EventBuilder struct {
+	event *domainEvent
+	err   error
+}
+
+func NewEventBuilder(
+	domainAggregate Aggregate,
 	payload []byte,
-	recordedAt time.Time,
 	eventType types.EventType,
-	causationID *uuid.UUID,
-	metadata map[string]string,
-) (Event, error) {
+) *EventBuilder {
 	err := validateDomainEventInput(
-		aggregateID,
-		aggregateType,
-		aggregateVersion,
-		id,
 		payload,
-		recordedAt,
 		eventType,
-		causationID,
 	)
 	if err != nil {
-		return nil, err
+		return &EventBuilder{err: err}
 	}
 
-	return &domainEvent{
-		aggregateID:      aggregateID,
-		aggregateType:    aggregateType,
-		aggregateVersion: aggregateVersion,
+	id := uuid.New()
+	recordedAt := time.Now()
+
+	event := &domainEvent{
+		aggregateID:      domainAggregate.ID(),
+		aggregateType:    domainAggregate.Type(),
+		aggregateVersion: domainAggregate.Version(),
 		id:               id,
 		payload:          payload,
 		recordedAt:       recordedAt,
 		eventType:        eventType,
-		causationID:      causationID,
-		metadata:         metadata,
-	}, nil
+		causationID:      nil,
+		metadata:         make(map[string]string),
+	}
+
+	return &EventBuilder{event: event, err: nil}
+}
+
+func (b *EventBuilder) WithCausationID(causationID *uuid.UUID) *EventBuilder {
+	if b.event == nil {
+		return b
+	}
+
+	if causationID != nil && *causationID == uuid.Nil {
+		b.err = errors.New(ErrInvalidCausationID)
+		return b
+	}
+
+	b.event.causationID = causationID
+	return b
+}
+
+func (b *EventBuilder) WithMetadata(metadata map[string]string) *EventBuilder {
+	if b.event == nil || metadata == nil {
+		return b
+	}
+
+	b.event.metadata = metadata
+	return b
+}
+
+func (b *EventBuilder) Build() (Event, error) {
+	if b.err != nil {
+		return nil, b.err
+	}
+
+	return b.event, nil
 }
 
 func (d domainEvent) AggregateID() uuid.UUID {
@@ -122,53 +151,18 @@ func (d domainEvent) Metadata() map[string]string {
 }
 
 const (
-	ErrInvalidEventID         = "invalid event ID"
-	ErrInvalidEventPayload    = "invalid event payload"
-	ErrInvalidEventRecordedAt = "invalid event recorded at"
-	ErrInvalidEventType       = "invalid event type"
-	ErrInvalidCausationID     = "invalid causation ID"
+	ErrInvalidEventPayload = "invalid event payload"
+	ErrInvalidEventType    = "invalid event type"
+	ErrInvalidCausationID  = "invalid causation ID"
 )
 
-func validateDomainEventInput(
-	aggregateID uuid.UUID,
-	aggregateType types.AggregateType,
-	aggregateVersion int,
-	id uuid.UUID,
-	payload []byte,
-	recordedAt time.Time,
-	eventType types.EventType,
-	causationID *uuid.UUID,
-) error {
-	if aggregateID == uuid.Nil {
-		return errors.New(ErrInvalidAggregateID)
-	}
-
-	if !aggregateType.IsValid() {
-		return errors.New(ErrInvalidAggregateType)
-	}
-
-	if aggregateVersion < 0 {
-		return errors.New(ErrInvalidAggregateVersion)
-	}
-
-	if id == uuid.Nil {
-		return errors.New(ErrInvalidEventID)
-	}
-
+func validateDomainEventInput(payload []byte, eventType types.EventType) error {
 	if len(payload) == 0 {
 		return errors.New(ErrInvalidEventPayload)
 	}
 
-	if recordedAt.IsZero() {
-		return errors.New(ErrInvalidEventRecordedAt)
-	}
-
 	if !eventType.IsValid() {
 		return errors.New(ErrInvalidEventType)
-	}
-
-	if causationID != nil && *causationID == uuid.Nil {
-		return errors.New(ErrInvalidCausationID)
 	}
 
 	return nil

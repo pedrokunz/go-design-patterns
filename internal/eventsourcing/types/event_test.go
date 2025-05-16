@@ -9,7 +9,7 @@ import (
 func TestRegisterEventType(t *testing.T) {
 	t.Run("all event types should be registered", func(t *testing.T) {
 		expectedEventTypes := []eventTypes.EventType{
-			eventTypes.PlayerCreatedEventType,
+			eventTypes.PlayerCreated,
 		}
 
 		require.Equal(t, expectedEventTypes, eventTypes.EventTypes())

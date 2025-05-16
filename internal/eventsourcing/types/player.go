@@ -3,10 +3,10 @@ package types
 const (
 	PlayerAggregate AggregateType = "player"
 
-	PlayerCreatedEventType EventType = "player.created"
+	PlayerCreated EventType = "player.created"
 )
 
 func init() {
 	RegisterAggregateType(PlayerAggregate)
-	RegisterEventType(PlayerCreatedEventType)
+	RegisterEventType(PlayerCreated)
 }
