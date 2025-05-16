@@ -10,7 +10,7 @@ import (
 
 func TestNewTreasureRoom(t *testing.T) {
 	t.Run("constructs a treasure room", func(t *testing.T) {
-		items := []item.Item{}
+		items := make([]item.Item, 0)
 		actual := internal.NewTreasureRoom(items)
 		expected := internal.NewTreasureRoom(items)
 
