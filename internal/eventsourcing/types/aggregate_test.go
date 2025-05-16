@@ -9,7 +9,7 @@ import (
 func TestRegisterAggregateType(t *testing.T) {
 	t.Run("all aggregate types should be registered", func(t *testing.T) {
 		expectedAggregateTypes := []types.AggregateType{
-			types.PlayerAggregateType,
+			types.PlayerAggregate,
 		}
 
 		require.Equal(t, expectedAggregateTypes, types.AggregateTypes())

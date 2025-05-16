@@ -23,80 +23,73 @@ type Aggregate interface {
 	// ApplyEvent applies an event to the aggregate, updating its internal state
 	ApplyEvent(event Event)
 
-	// Changes returns all new events that have been generated but not yet persisted
-	Changes() []Event
+	// Events returns all new events that have been generated but not yet persisted
+	Events() []Event
 
-	// FlushChanges removes all events after they have been successfully stored
-	FlushChanges()
+	// FlushEvents removes all events after they have been successfully stored
+	FlushEvents()
 }
 
-type domainAggregate struct {
+type DomainAggregate struct {
 	id            uuid.UUID
 	aggregateType types.AggregateType
 	version       int
-	changes       []Event
+	events        []Event
 }
 
 func NewDomainAggregate(
 	id uuid.UUID,
 	aggregateType types.AggregateType,
-	version int,
 ) (Aggregate, error) {
-	err := validateDomainAggregateInput(id, aggregateType, version)
+	err := validateDomainAggregateInput(id, aggregateType)
 	if err != nil {
 		return nil, err
 	}
 
-	return &domainAggregate{
+	return &DomainAggregate{
 		id:            id,
 		aggregateType: aggregateType,
-		version:       version,
-		changes:       []Event{},
+		events:        []Event{},
 	}, nil
 }
 
-func (d *domainAggregate) ID() uuid.UUID {
+func (d *DomainAggregate) ID() uuid.UUID {
 	return d.id
 }
 
-func (d *domainAggregate) Type() types.AggregateType {
+func (d *DomainAggregate) Type() types.AggregateType {
 	return d.aggregateType
 }
 
-func (d *domainAggregate) Version() int {
+func (d *DomainAggregate) Version() int {
 	return d.version
 }
 
-func (d *domainAggregate) ApplyEvent(event Event) {
+func (d *DomainAggregate) ApplyEvent(event Event) {
 	d.version++
-	d.changes = append(d.changes, event)
+	d.events = append(d.events, event)
 }
 
-func (d *domainAggregate) Changes() []Event {
-	return d.changes
+func (d *DomainAggregate) Events() []Event {
+	return d.events
 }
 
-func (d *domainAggregate) FlushChanges() {
-	d.changes = []Event{}
+func (d *DomainAggregate) FlushEvents() {
+	d.events = []Event{}
 }
 
 const (
-	ErrInvalidAggregateID      = "invalid aggregate ID"
-	ErrInvalidAggregateType    = "invalid aggregate type"
-	ErrInvalidAggregateVersion = "invalid aggregate version"
+	ErrInvalidAggregateID   = "invalid aggregate ID"
+	ErrInvalidAggregateType = "invalid aggregate type"
 )
 
-func validateDomainAggregateInput(id uuid.UUID, aggregateType types.AggregateType, version int) error {
+func validateDomainAggregateInput(id uuid.UUID, aggregateType types.AggregateType) error {
 	if id == uuid.Nil {
 		return fmt.Errorf(ErrInvalidAggregateID)
 	}
 
 	if !aggregateType.IsValid() {
 		return fmt.Errorf(ErrInvalidAggregateType)
-	}
-
-	if version < 0 {
-		return fmt.Errorf(ErrInvalidAggregateVersion)
 	}
 
 	return nil

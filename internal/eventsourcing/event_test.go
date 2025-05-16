@@ -13,8 +13,15 @@ import (
 func TestEvent(t *testing.T) {
 	// Arrange
 	aggregateID := common.NewDeterministicUUID("player-1")
-	aggregateType := types.PlayerAggregateType
 	aggregateVersion := 0
+	aggregateType := types.PlayerAggregate
+	aggregate, newDomainAggregateErr := eventsourcing.NewDomainAggregate(
+		aggregateID,
+		aggregateType,
+	)
+
+	require.NoError(t, newDomainAggregateErr)
+
 	id := common.NewDeterministicUUID("event-1")
 	payload := []byte(`{"name":"player1"}`)
 	recordedAt := time.Now()
