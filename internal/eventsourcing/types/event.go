@@ -24,16 +24,14 @@ func (e EventType) IsValid() bool {
 func EventTypes() []EventType {
 	eventTypes := make([]EventType, 0)
 
-	sync.OnceFunc(func() {
-		validEventTypes.Range(func(key, value any) bool {
-			eventType, found := key.(EventType)
-			if found {
-				eventTypes = append(eventTypes, eventType)
-			}
+	validEventTypes.Range(func(key, value any) bool {
+		eventType, found := key.(EventType)
+		if found {
+			eventTypes = append(eventTypes, eventType)
+		}
 
-			return found
-		})
-	})()
+		return found
+	})
 
 	return eventTypes
 }

@@ -24,16 +24,14 @@ func (a AggregateType) IsValid() bool {
 func AggregateTypes() []AggregateType {
 	aggregateTypes := make([]AggregateType, 0)
 
-	sync.OnceFunc(func() {
-		validAggregateTypes.Range(func(key, value any) bool {
-			aggregateType, found := key.(AggregateType)
-			if found {
-				aggregateTypes = append(aggregateTypes, aggregateType)
-			}
+	validAggregateTypes.Range(func(key, value any) bool {
+		aggregateType, found := key.(AggregateType)
+		if found {
+			aggregateTypes = append(aggregateTypes, aggregateType)
+		}
 
-			return found
-		})
-	})()
+		return found
+	})
 
 	return aggregateTypes
 }
