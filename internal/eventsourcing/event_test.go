@@ -3,6 +3,7 @@ package eventsourcing_test
 import (
 	"github.com/google/uuid"
 	"github.com/pedrokunz/go-design-patterns/internal/common"
+	"github.com/pedrokunz/go-design-patterns/internal/domain/aggregate/player"
 	"github.com/pedrokunz/go-design-patterns/internal/eventsourcing"
 	"github.com/pedrokunz/go-design-patterns/internal/eventsourcing/types"
 	"github.com/stretchr/testify/require"
@@ -12,7 +13,7 @@ import (
 func TestEvent(t *testing.T) {
 	// Arrange
 	aggregateID := common.NewDeterministicUUID("player-1")
-	aggregateType := types.PlayerAggregate
+	aggregateType := player.Aggregate
 	aggregate, newDomainAggregateErr := eventsourcing.NewDomainAggregate(
 		aggregateID,
 		aggregateType,
@@ -21,7 +22,7 @@ func TestEvent(t *testing.T) {
 	require.NoError(t, newDomainAggregateErr)
 
 	payload := []byte(`{"name":"player1"}`)
-	eventType := types.PlayerCreated
+	eventType := player.Created
 	causationID := common.NewDeterministicUUID("command-or-event-1")
 	metadata := map[string]string{"key": "value"}
 

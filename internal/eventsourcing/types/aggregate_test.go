@@ -1,6 +1,7 @@
 package types_test
 
 import (
+	"github.com/pedrokunz/go-design-patterns/internal/domain/aggregate/player"
 	"github.com/pedrokunz/go-design-patterns/internal/eventsourcing/types"
 	"github.com/stretchr/testify/require"
 	"testing"
@@ -9,7 +10,7 @@ import (
 func TestRegisterAggregateType(t *testing.T) {
 	t.Run("all aggregate types should be registered", func(t *testing.T) {
 		expectedAggregateTypes := []types.AggregateType{
-			types.PlayerAggregate,
+			player.Aggregate,
 		}
 
 		require.Equal(t, expectedAggregateTypes, types.AggregateTypes())

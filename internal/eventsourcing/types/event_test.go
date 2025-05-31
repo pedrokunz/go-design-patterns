@@ -1,6 +1,7 @@
 package types_test
 
 import (
+	"github.com/pedrokunz/go-design-patterns/internal/domain/aggregate/player"
 	eventTypes "github.com/pedrokunz/go-design-patterns/internal/eventsourcing/types"
 	"github.com/stretchr/testify/require"
 	"testing"
@@ -9,7 +10,7 @@ import (
 func TestRegisterEventType(t *testing.T) {
 	t.Run("all event types should be registered", func(t *testing.T) {
 		expectedEventTypes := []eventTypes.EventType{
-			eventTypes.PlayerCreated,
+			player.Created,
 		}
 
 		require.Equal(t, expectedEventTypes, eventTypes.EventTypes())
