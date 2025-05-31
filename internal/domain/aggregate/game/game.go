@@ -7,30 +7,30 @@ import (
 	"github.com/pedrokunz/go-design-patterns/internal/domain/event/observer"
 )
 
-var state *State = nil
+var game *Game = nil
 
-type State struct {
+type Game struct {
 	Player       *player.Player
 	Rooms        []room.Room
 	Notifier     observer.Notifier
 	IsPlayerTurn bool
 }
 
-func NewState() *State {
-	if state == nil {
-		state = &State{
+func NewGame() *Game {
+	if game == nil {
+		game = &Game{
 			Rooms:    make([]room.Room, 0),
 			Notifier: observer.NewNotifier(),
 		}
 	}
 
-	return state
+	return game
 }
 
-func (state *State) AddObserver(observer observer.Observer) {
+func (state *Game) AddObserver(observer observer.Observer) {
 	_ = state.Notifier.Attach(observer)
 }
 
-func (state *State) NotifyEvent(event event.Event) {
+func (state *Game) NotifyEvent(event event.Event) {
 	_ = state.Notifier.Notify(event)
 }

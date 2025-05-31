@@ -26,7 +26,7 @@ func main() {
 		_, _ = fmt.Fprintf(os.Stderr, "Reading standard input: %v\n", "test")
 	}
 
-	state := game.NewState()
+	state := game.NewGame()
 	Player := player.New(name)
 
 	state.Player = Player

@@ -10,18 +10,18 @@ import (
 )
 
 func TestNewState(t *testing.T) {
-	t.Run("returns a valid state", func(t *testing.T) {
-		actual := game.NewState()
+	t.Run("returns a valid game", func(t *testing.T) {
+		actual := game.NewGame()
 
-		require.NotNil(t, actual, "NewState should not be nil")
+		require.NotNil(t, actual, "NewGame should not be nil")
 		require.NotNil(t, actual.Notifier, "Notifier should not be nil")
 		require.NotNil(t, actual.Rooms, "Rooms should not be nil")
 		require.Len(t, actual.Rooms, 0, "Rooms should be empty")
 	})
 
-	t.Run("returns the same state", func(t *testing.T) {
-		actual := game.NewState()
-		expected := game.NewState()
+	t.Run("returns the same game", func(t *testing.T) {
+		actual := game.NewGame()
+		expected := game.NewGame()
 
 		require.Equal(
 			t,
@@ -32,7 +32,7 @@ func TestNewState(t *testing.T) {
 	})
 
 	t.Run("notifies multiple observers of events", func(t *testing.T) {
-		state := game.NewState()
+		state := game.NewGame()
 		mockSubject := &MockSubject{}
 		state.Notifier = mockSubject
 
