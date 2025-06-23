@@ -17,18 +17,18 @@ func TestNew(t *testing.T) {
 		require.Len(t, actual.Rooms, 0, "Rooms should be empty")
 	})
 
-	t.Run("returns the same game", func(t *testing.T) {
+	t.Run("returns different games", func(t *testing.T) {
 		actual, actualCreateErr := game.Create()
 		expected, expectedCreateErr := game.Create()
 
 		require.NoError(t, actualCreateErr, "Create should not return an error")
 		require.NoError(t, expectedCreateErr, "Create should not return an error")
 
-		require.Equal(
+		require.NotEqual(
 			t,
 			actual,
 			expected,
-			"States should be equal",
+			"Games should not be equal",
 		)
 	})
 }

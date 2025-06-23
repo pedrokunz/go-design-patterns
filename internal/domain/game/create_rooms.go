@@ -9,30 +9,26 @@ import (
 )
 
 func (g *Game) CreateRooms() error {
-	treasuryRoom := room.Factory(
-		room.FactoryInput{
-			Kind: room.KindTreasure,
-			Items: []item.Item{
-				{
-					Name: "Sword",
-					Type: item.Weapon,
-				},
-				{
-					Name: "Shield",
-					Type: item.Armour,
-				},
+	treasuryRoom := room.Room{
+		Kind: room.KindTreasure,
+		Items: []item.Item{
+			{
+				Name: "Sword",
+				Type: item.Weapon,
+			},
+			{
+				Name: "Shield",
+				Type: item.Armour,
 			},
 		},
-	)
+	}
 
-	enemyRoom := room.Factory(
-		room.FactoryInput{
-			Kind: room.KindEnemy,
-			Enemies: []*enemy.Enemy{
-				enemy.New(enemy.Goblin),
-			},
+	enemyRoom := room.Room{
+		Kind: room.KindEnemy,
+		Enemies: []*enemy.Enemy{
+			enemy.New(enemy.Goblin),
 		},
-	)
+	}
 
 	rooms := []room.Room{treasuryRoom, enemyRoom}
 	payload, err := json.Marshal(rooms)
