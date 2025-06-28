@@ -1,21 +1,20 @@
 package game
 
 import (
-	"github.com/pedrokunz/go-design-patterns/internal/domain/internal/aggregate"
-	"github.com/pedrokunz/go-design-patterns/internal/domain/internal/event"
+	"github.com/pedrokunz/go-design-patterns/internal/domain/aggregate/types"
 )
 
 const (
-	Aggregate aggregate.Type = "game"
+	Aggregate types.AggregateType = "game"
 
-	Created      event.Type = "game.created"
-	RoomsCreated event.Type = "game.room.created"
-	PlayerAdded  event.Type = "game.player.added"
+	Created      types.EventType = "game.created"
+	RoomsCreated types.EventType = "game.room.created"
+	PlayerAdded  types.EventType = "game.player.added"
 )
 
 func init() {
-	aggregate.RegisterType(Aggregate)
-	event.RegisterType(Created)
-	event.RegisterType(RoomsCreated)
-	event.RegisterType(PlayerAdded)
+	types.RegisterAggregateType(Aggregate)
+	types.RegisterEventType(Created)
+	types.RegisterEventType(RoomsCreated)
+	types.RegisterEventType(PlayerAdded)
 }

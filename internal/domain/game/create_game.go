@@ -3,15 +3,22 @@ package game
 import (
 	"encoding/json"
 	"github.com/google/uuid"
-	"github.com/pedrokunz/go-design-patterns/internal/domain/internal"
+	"github.com/pedrokunz/go-design-patterns/internal/common"
+	"github.com/pedrokunz/go-design-patterns/internal/domain/aggregate"
 	"github.com/pedrokunz/go-design-patterns/internal/domain/room"
 )
 
-func Create() (*Game, error) {
-	domainAggregate, newDomainAggregateErr := internal.NewAggregate(
-		uuid.New(),
-		Aggregate,
-	)
+func Create(generator common.UUIDGenerator) (*Game, error) {
+	if generator == nil {
+		generator = uuid.NewRandom
+	}
+
+	gameID, err := generator()
+	if err != nil {
+		return nil, err
+	}
+
+	domainAggregate, newDomainAggregateErr := aggregate.NewAggregate(gameID, Aggregate)
 	if newDomainAggregateErr != nil {
 		return nil, newDomainAggregateErr
 	}
@@ -26,12 +33,11 @@ func Create() (*Game, error) {
 		return nil, err
 	}
 
-	event, err := internal.NewEventBuilder(
+	event, err := aggregate.NewEventBuilder(
 		game.Aggregate,
 		payload,
 		Created,
-	).
-		Build()
+	).Build()
 	if err != nil {
 		return nil, err
 	}

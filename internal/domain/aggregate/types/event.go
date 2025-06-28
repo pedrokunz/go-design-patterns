@@ -1,18 +1,18 @@
-package event
+package types
 
 import "sync"
 
-type Type string
+type EventType string
 
 // validEventTypes holds all registered event types
 var validEventTypes = sync.Map{}
 
-// RegisterType registers an event type as valid
-func RegisterType(eventType Type) {
+// RegisterEventType registers an event type as valid
+func RegisterEventType(eventType EventType) {
 	validEventTypes.Store(eventType, true)
 }
 
-func (e Type) IsValid() bool {
+func (e EventType) IsValid() bool {
 	if e == "" {
 		return false
 	}
@@ -21,11 +21,11 @@ func (e Type) IsValid() bool {
 	return isValid
 }
 
-func Types() []Type {
-	eventTypes := make([]Type, 0)
+func EventTypes() []EventType {
+	eventTypes := make([]EventType, 0)
 
 	validEventTypes.Range(func(key, value any) bool {
-		eventType, found := key.(Type)
+		eventType, found := key.(EventType)
 		if found {
 			eventTypes = append(eventTypes, eventType)
 		}

@@ -1,17 +1,16 @@
 package player
 
 import (
-	"github.com/pedrokunz/go-design-patterns/internal/domain/internal/aggregate"
-	"github.com/pedrokunz/go-design-patterns/internal/domain/internal/event"
+	"github.com/pedrokunz/go-design-patterns/internal/domain/aggregate/types"
 )
 
 const (
-	Aggregate aggregate.Type = "player"
+	Aggregate types.AggregateType = "player"
 
-	Created event.Type = "player.created"
+	Created types.EventType = "player.created"
 )
 
 func init() {
-	aggregate.RegisterType(Aggregate)
-	event.RegisterType(Created)
+	types.RegisterAggregateType(Aggregate)
+	types.RegisterEventType(Created)
 }

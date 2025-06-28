@@ -1,14 +1,20 @@
 package create_rooms
 
 import (
+	"github.com/pedrokunz/go-design-patterns/internal/common"
 	"github.com/pedrokunz/go-design-patterns/internal/domain"
 	"github.com/pedrokunz/go-design-patterns/internal/domain/game"
 )
 
-func NewCommand(eventStore domain.EventStore, input Input) *Command {
+func NewCommand(
+	eventStore domain.EventStore,
+	input Input,
+	uuidGenerator common.UUIDGenerator,
+) *Command {
 	return &Command{
-		eventStore: eventStore,
-		input:      input,
+		eventStore:    eventStore,
+		input:         input,
+		uuidGenerator: uuidGenerator,
 	}
 }
 
@@ -21,7 +27,7 @@ func (c *Command) Execute() Output {
 		}
 	}
 
-	err := Game.CreateRooms()
+	err := Game.CreateRooms(c.uuidGenerator, c.input.Configs)
 	if err != nil {
 		return Output{
 			Game:  nil,

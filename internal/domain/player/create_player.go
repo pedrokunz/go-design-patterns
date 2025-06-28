@@ -4,18 +4,26 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/google/uuid"
+	"github.com/pedrokunz/go-design-patterns/internal/common"
+	"github.com/pedrokunz/go-design-patterns/internal/domain/aggregate"
 	"github.com/pedrokunz/go-design-patterns/internal/domain/internal"
 )
 
-func Create(name string) (*Player, error) {
+func Create(generator common.UUIDGenerator, name string) (*Player, error) {
+	if generator == nil {
+		generator = uuid.NewRandom
+	}
+
+	playerID, err := generator()
+	if err != nil {
+		return nil, err
+	}
+
 	if len(name) < 3 || len(name) > 10 {
 		return nil, errors.New("player name must be between 3 and 10 characters")
 	}
 
-	domainAggregate, newDomainAggregateErr := internal.NewAggregate(
-		uuid.New(),
-		Aggregate,
-	)
+	domainAggregate, newDomainAggregateErr := aggregate.NewAggregate(playerID, Aggregate)
 	if newDomainAggregateErr != nil {
 		return nil, newDomainAggregateErr
 	}
@@ -33,7 +41,7 @@ func Create(name string) (*Player, error) {
 		return nil, err
 	}
 
-	event, err := internal.NewEventBuilder(
+	event, err := aggregate.NewEventBuilder(
 		player.Aggregate,
 		payload,
 		Created,

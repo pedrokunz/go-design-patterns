@@ -2,46 +2,41 @@ package game
 
 import (
 	"encoding/json"
-	"github.com/pedrokunz/go-design-patterns/internal/domain/enemy"
-	"github.com/pedrokunz/go-design-patterns/internal/domain/internal"
-	"github.com/pedrokunz/go-design-patterns/internal/domain/item"
+	"github.com/google/uuid"
+	"github.com/pedrokunz/go-design-patterns/internal/common"
+	"github.com/pedrokunz/go-design-patterns/internal/domain/aggregate"
 	"github.com/pedrokunz/go-design-patterns/internal/domain/room"
 )
 
-func (g *Game) CreateRooms() error {
-	treasuryRoom := room.Room{
-		Kind: room.KindTreasure,
-		Items: []item.Item{
-			{
-				Name: "Sword",
-				Type: item.Weapon,
-			},
-			{
-				Name: "Shield",
-				Type: item.Armour,
-			},
-		},
+func (g *Game) CreateRooms(generator common.UUIDGenerator, configs []room.Config) error {
+	if generator == nil {
+		generator = uuid.NewRandom
 	}
 
-	enemyRoom := room.Room{
-		Kind: room.KindEnemy,
-		Enemies: []*enemy.Enemy{
-			enemy.New(enemy.Goblin),
-		},
+	var rooms []room.Room
+	for _, config := range configs {
+		roomID, err := generator()
+		if err != nil {
+			return err
+		}
+		rooms = append(rooms, room.Room{
+			ID:      roomID,
+			Kind:    config.Kind,
+			Items:   config.Items,
+			Enemies: config.Enemies,
+		})
 	}
 
-	rooms := []room.Room{treasuryRoom, enemyRoom}
 	payload, err := json.Marshal(rooms)
 	if err != nil {
 		return err
 	}
 
-	event, err := internal.NewEventBuilder(
+	event, err := aggregate.NewEventBuilder(
 		g.Aggregate,
 		payload,
 		RoomsCreated,
-	).
-		Build()
+	).Build()
 	if err != nil {
 		return err
 	}

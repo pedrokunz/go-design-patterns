@@ -2,16 +2,17 @@ package player
 
 import (
 	"encoding/json"
+	"github.com/pedrokunz/go-design-patterns/internal/domain/aggregate"
 	"github.com/pedrokunz/go-design-patterns/internal/domain/internal"
 	"math/rand"
 )
 
 type Player struct {
-	Aggregate *internal.Aggregate `json:"aggregate"`
-	Name      string              `json:"name"`
-	Armour    internal.Armour     `json:"armour"`
-	Life      internal.Life       `json:"life"`
-	Attack    internal.Attack     `json:"attack"`
+	Aggregate *aggregate.Aggregate `json:"aggregate"`
+	Name      string               `json:"name"`
+	Armour    internal.Armour      `json:"armour"`
+	Life      internal.Life        `json:"life"`
+	Attack    internal.Attack      `json:"attack"`
 }
 
 func (p *Player) TakeDamage(attack internal.Attack) int {
@@ -22,7 +23,7 @@ func (p *Player) TakeDamage(attack internal.Attack) int {
 	return damage
 }
 
-func (p *Player) Apply(event internal.Event) error {
+func (p *Player) Apply(event aggregate.Event) error {
 	switch event.Type() {
 	case Created:
 		return json.Unmarshal(event.Payload(), p)
@@ -30,7 +31,7 @@ func (p *Player) Apply(event internal.Event) error {
 	return nil
 }
 
-func LoadFromHistory(events []internal.Event) (*Player, error) {
+func LoadFromHistory(events []aggregate.Event) (*Player, error) {
 	player := &Player{}
 	for _, event := range events {
 		if err := player.Apply(event); err != nil {

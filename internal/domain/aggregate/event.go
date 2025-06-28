@@ -1,11 +1,11 @@
-package internal
+package aggregate
 
 import (
 	"errors"
-	"github.com/google/uuid"
-	"github.com/pedrokunz/go-design-patterns/internal/domain/internal/aggregate"
-	"github.com/pedrokunz/go-design-patterns/internal/domain/internal/event"
+	"github.com/pedrokunz/go-design-patterns/internal/domain/aggregate/types"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 // Event represents an immutable record of something that happened in the domain.
@@ -16,7 +16,7 @@ type Event interface {
 	// AggregateID Identifies which aggregate instance this event belongs to
 	AggregateID() uuid.UUID
 	// AggregateType Defines the type of aggregate
-	AggregateType() aggregate.Type
+	AggregateType() types.AggregateType
 	// AggregateVersion Indicates the version of the aggregate after this event is applied
 	AggregateVersion() int
 
@@ -27,7 +27,7 @@ type Event interface {
 	// RecordedAt When this event was recorded in the event store
 	RecordedAt() time.Time
 	// Type The descriptive type name of this event
-	Type() event.Type
+	Type() types.EventType
 
 	// CausationID Identifies the command or event that triggered this event,
 	// creating a causal chain for tracing purposes
@@ -38,12 +38,12 @@ type Event interface {
 
 type domainEvent struct {
 	aggregateID      uuid.UUID
-	aggregateType    aggregate.Type
+	aggregateType    types.AggregateType
 	aggregateVersion int
 	id               uuid.UUID
 	payload          []byte
 	recordedAt       time.Time
-	eventType        event.Type
+	eventType        types.EventType
 	causationID      *uuid.UUID
 	metadata         map[string]string
 }
@@ -56,7 +56,7 @@ type EventBuilder struct {
 func NewEventBuilder(
 	domainAggregate *Aggregate,
 	payload []byte,
-	eventType event.Type,
+	eventType types.EventType,
 ) *EventBuilder {
 	err := validateDomainEventInput(
 		payload,
@@ -119,7 +119,7 @@ func (d domainEvent) AggregateID() uuid.UUID {
 	return d.aggregateID
 }
 
-func (d domainEvent) AggregateType() aggregate.Type {
+func (d domainEvent) AggregateType() types.AggregateType {
 	return d.aggregateType
 }
 
@@ -139,7 +139,7 @@ func (d domainEvent) RecordedAt() time.Time {
 	return d.recordedAt
 }
 
-func (d domainEvent) Type() event.Type {
+func (d domainEvent) Type() types.EventType {
 	return d.eventType
 }
 
@@ -152,12 +152,13 @@ func (d domainEvent) Metadata() map[string]string {
 }
 
 const (
+	ErrInvalidEvent        = "invalid event"
 	ErrInvalidEventPayload = "invalid event payload"
 	ErrInvalidEventType    = "invalid event type"
 	ErrInvalidCausationID  = "invalid causation ID"
 )
 
-func validateDomainEventInput(payload []byte, eventType event.Type) error {
+func validateDomainEventInput(payload []byte, eventType types.EventType) error {
 	if len(payload) == 0 {
 		return errors.New(ErrInvalidEventPayload)
 	}

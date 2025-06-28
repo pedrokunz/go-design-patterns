@@ -9,8 +9,11 @@ import (
 	"github.com/pedrokunz/go-design-patterns/internal/app/command/create_player"
 	"github.com/pedrokunz/go-design-patterns/internal/app/command/create_rooms"
 	"github.com/pedrokunz/go-design-patterns/internal/domain"
+	"github.com/pedrokunz/go-design-patterns/internal/domain/enemy"
 	"github.com/pedrokunz/go-design-patterns/internal/domain/game"
+	"github.com/pedrokunz/go-design-patterns/internal/domain/item"
 	"github.com/pedrokunz/go-design-patterns/internal/domain/player"
+	"github.com/pedrokunz/go-design-patterns/internal/domain/room"
 	"os"
 )
 
@@ -67,7 +70,7 @@ func main() {
 }
 
 func createGame() *game.Game {
-	command := create_game.NewCommand(eventStore, create_game.Input{})
+	command := create_game.NewCommand(eventStore, create_game.Input{}, uuid.NewRandom)
 
 	output := command.Execute()
 	if output.Error != nil {
@@ -78,9 +81,26 @@ func createGame() *game.Game {
 }
 
 func createRooms(gameID uuid.UUID) *game.Game {
-	command := create_rooms.NewCommand(eventStore, create_rooms.Input{
-		GameID: gameID,
-	})
+	command := create_rooms.NewCommand(
+		eventStore,
+		create_rooms.Input{
+			GameID: gameID,
+			Configs: []room.Config{
+				{
+					Kind: room.KindTreasure,
+					Items: []item.Item{
+						{Name: "Sword", Type: item.Weapon},
+						{Name: "Shield", Type: item.Armour},
+					},
+				},
+				{
+					Kind:    room.KindEnemy,
+					Enemies: []*enemy.Enemy{enemy.New(enemy.Goblin)},
+				},
+			},
+		},
+		uuid.NewRandom,
+	)
 
 	output := command.Execute()
 	if output.Error != nil {
@@ -97,6 +117,7 @@ func createPlayer(playerName string) *player.Player {
 		create_player.Input{
 			PlayerName: playerName,
 		},
+		uuid.NewRandom,
 	)
 
 	output := command.Execute()

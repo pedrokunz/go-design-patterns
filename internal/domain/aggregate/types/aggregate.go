@@ -1,18 +1,18 @@
-package aggregate
+package types
 
 import "sync"
 
-type Type string
+type AggregateType string
 
 // validTypes holds all registered aggregate types
 var validTypes = sync.Map{}
 
-// RegisterType registers an aggregate type as valid
-func RegisterType(aggregateType Type) {
+// RegisterAggregateType registers an aggregate type as valid
+func RegisterAggregateType(aggregateType AggregateType) {
 	validTypes.Store(aggregateType, true)
 }
 
-func (a Type) IsValid() bool {
+func (a AggregateType) IsValid() bool {
 	if a == "" {
 		return false
 	}
@@ -21,11 +21,11 @@ func (a Type) IsValid() bool {
 	return isValid
 }
 
-func Types() []Type {
-	types := make([]Type, 0)
+func AggregateTypes() []AggregateType {
+	types := make([]AggregateType, 0)
 
 	validTypes.Range(func(key, value any) bool {
-		aggregateType, found := key.(Type)
+		aggregateType, found := key.(AggregateType)
 		if found {
 			types = append(types, aggregateType)
 		}

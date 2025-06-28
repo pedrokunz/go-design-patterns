@@ -1,13 +1,15 @@
 package create_player
 
 import (
+	"github.com/pedrokunz/go-design-patterns/internal/common"
 	"github.com/pedrokunz/go-design-patterns/internal/domain"
 	"github.com/pedrokunz/go-design-patterns/internal/domain/player"
 )
 
 type Command struct {
-	eventStore domain.EventStore
-	input      Input
+	eventStore    domain.EventStore
+	input         Input
+	uuidGenerator common.UUIDGenerator
 }
 
 type Input struct {

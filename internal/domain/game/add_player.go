@@ -3,7 +3,7 @@ package game
 import (
 	"encoding/json"
 	"errors"
-	"github.com/pedrokunz/go-design-patterns/internal/domain/internal"
+	"github.com/pedrokunz/go-design-patterns/internal/domain/aggregate"
 	"github.com/pedrokunz/go-design-patterns/internal/domain/player"
 )
 
@@ -25,12 +25,11 @@ func (g *Game) AddPlayer(player *player.Player) error {
 		return err
 	}
 
-	event, err := internal.NewEventBuilder(
+	event, err := aggregate.NewEventBuilder(
 		g.Aggregate,
 		payload,
 		PlayerAdded,
-	).
-		Build()
+	).Build()
 	if err != nil {
 		return err
 	}
